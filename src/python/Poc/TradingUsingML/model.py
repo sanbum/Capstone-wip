@@ -195,7 +195,7 @@ accuracy = float(np.sum(y_pred==y_test))/y_test.shape[0]
 
 print("accuracy: %f" % (accuracy))
 
-
+print ("hello")
 from sklearn.metrics import confusion_matrix, accuracy_score
 cf = confusion_matrix(y_test, y_pred)
 
