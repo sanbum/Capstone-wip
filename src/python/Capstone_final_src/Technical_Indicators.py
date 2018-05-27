@@ -43,10 +43,11 @@ class technical_indicators():
         self.numOfDays = numOfDays        
         delta = self.stock['Close'].diff()    
         deltaUp = np.where(delta>0, delta, 0)
+        print (deltaUp)
         deltaDown = np.where(delta<0, delta, 0)    
-        dfDeltaUp = pd.DataFrame(data=deltaUp, columns=['deltaUp'])
-        dfDeltaDown = pd.DataFrame(data=deltaDown, columns=['deltaDown'])
-        rollingDf = pd.DataFrame(np.zeros, index=range(0,len(self.stock['Close'])), 
+        dfDeltaUp = pd.DataFrame(data=deltaUp, index = stock.index, columns=['deltaUp'])
+        dfDeltaDown = pd.DataFrame(data=deltaDown, index = stock.index,  columns=['deltaDown'])
+        rollingDf = pd.DataFrame(np.zeros, index = stock.index, 
             columns=['rollingUp','rollingDown'])
         rollingDf['rollingUp'] = dfDeltaUp.rolling(window=numOfDays).mean()
         #rollingDf['rollingUp'].fillna(0, inplace=True)
@@ -54,6 +55,7 @@ class technical_indicators():
         #rollingDf['rollingDown'].fillna(0, inplace=True)
         rollingDf['RS'] = (rollingDf['rollingUp'] / rollingDf['rollingDown']).abs()
         rsi = 100.0 - (100.0/(1.0 + rollingDf['RS']))
+        print (rsi)
         self.stock['rsi'] = rsi
         return self.stock
     
@@ -148,6 +150,22 @@ class technical_indicators():
                 elif stma[i-1] == ltma[j-1]:           
                     values1.append(0) # stma cuts ltma from below
                     values2.append(0) # stma cuts ltma from above
+                    
+                    
+            elif stma[i] > ltma[i]:
+                
+                if (stma[i-1] < ltma[j-1]): #stma cuts from below 
+                    values2.append(0) # stma cuts ltma from above
+                    values1.append(1) # stma cuts ltma from below 
+                    
+                    
+            elif stma[i] < ltma[i]:
+                
+                if (stma[i-1] > ltma[j-1]): # ltma cutss stma from below 
+                    values2.append(1) # stma cuts ltma from above
+                    values1.append(0) # stma cuts ltma from below  
+                    
+
 
             else:
                 overlapping.append(0)
